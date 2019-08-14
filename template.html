@@ -1,0 +1,19 @@
+<html>
+    <body>
+        <h1>{{.PageTitle}}</h1>
+
+        <ul>
+            {{ range .Packages }}
+                <li>
+                    <h2>Package: {{ .name }}</h2>
+                    <h3>Used in {{ countProjects .projects }} project{{ if gt (countProjects .projects) 1 }}s{{end}}</h3>
+                    <h3>License(s): {{ .licenseTitle }}</h3>
+                    {{ if ne .licenseTitle "no license"}}
+                        <h3>License text(s):</h3>
+                        {{ returnHTML .licenseText }}
+                    {{ end }}
+                </li>
+            {{ end }}
+        </ul>
+    </body>
+</html>
