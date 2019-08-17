@@ -20,15 +20,17 @@ func main() {
 	orgIDPtr := flag.String("orgID", "", "Your Org ID")
 	endpointAPIPtr := flag.String("api", "https://snyk.io/api", "Your API endpoint")
 	apiTokenPtr := flag.String("token", "", "Your API token")
+	insecurePtr := flag.Bool("insecure", false, "Ignore SSL errors")
 	flag.Parse()
 
 	var orgID = *orgIDPtr
 	// var projectID string = *projectIDPtr
 	var endpointAPI = *endpointAPIPtr
 	var apiToken = *apiTokenPtr
+	var insecure = *insecurePtr
 
 	//getDependenciesPageSimpler(endpointAPI+"/v1/org/"+orgID+"/dependencies", apiToken)
-	results := GetAllDependencies(endpointAPI, orgID, apiToken)
+	results := GetAllDependencies(endpointAPI, orgID, apiToken, insecure)
 	var resultsAsMap []map[string]interface{}
 	licensesMap = make(map[string]map[string]string)
 	for _, result := range results {
