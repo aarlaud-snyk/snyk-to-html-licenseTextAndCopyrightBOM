@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/michael-go/go-jsn/jsn"
@@ -53,14 +54,14 @@ type dependenciesResults struct {
 }
 
 // GetAllDependencies - Exporting All Dependencies function
-func GetAllDependencies(endpointAPI string, orgID string, token string) []jsn.Json {
+func GetAllDependencies(endpointAPI string, orgID string, token string, insecureFlag bool) []jsn.Json {
 	var resultsSet []jsn.Json
 	fmt.Println("Retrieving data pages")
 	nextPage := endpointAPI + "/v1/org/" + orgID + "/dependencies"
 	lastPage := false
 	for lastPage == false {
 
-		resultsSetPage, links := getDependenciesPage(nextPage, token)
+		resultsSetPage, links := getDependenciesPage(nextPage, token, insecureFlag)
 		//resultsSet = append(resultsSet, resultSetPage...)
 
 		r := resultsSetPage.K("results")
@@ -82,7 +83,7 @@ func GetAllDependencies(endpointAPI string, orgID string, token string) []jsn.Js
 	return resultsSet
 }
 
-func getDependenciesPage(url string, token string) (jsn.Json, linkheader.Links) {
+func getDependenciesPage(url string, token string, insecureFlag bool) (jsn.Json, linkheader.Links) {
 	dependenciesBody := dependenciesFilters{
 		filter{
 			// Languages:    []string{},
@@ -94,6 +95,10 @@ func getDependenciesPage(url string, token string) (jsn.Json, linkheader.Links) 
 	}
 
 	b, err := json.Marshal(dependenciesBody)
+	if insecureFlag {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+
 	request, _ := http.NewRequest("POST", url, bytes.NewBuffer(b))
 	request.Header.Add("Content-Type", "application/json")
 	request.Header.Add("Authorization", "token "+token)
