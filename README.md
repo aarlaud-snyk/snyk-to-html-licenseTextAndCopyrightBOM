@@ -15,6 +15,9 @@ Generates an output.html file locally
 Optional for Snyk Private instances  
 `-api https://your-instance-hostname/api`
 
+Optional to ignore TLS errors (private CA certs, expired certificates)
+`-insecure`
+
 ### To do
 - Implement some tests
 - Set build pipeline
